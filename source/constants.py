@@ -1,6 +1,8 @@
-# Sprite scaling. Make this larger, like 0.5 to zoom in and add
-# 'mystery' to what you can see. Make it smaller, like 0.1 to see
-# more of the map.
+INSTRUCTIONS_PAGE_0 = 0
+INSTRUCTIONS_PAGE_1 = 1
+GAME_RUNNING = 2
+GAME_OVER = 3
+
 WALL_SPRITE_SCALING = 0.6
 PLAYER_SPRITE_SCALING = 0.4
 

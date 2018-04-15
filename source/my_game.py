@@ -27,9 +27,18 @@ class MyGame(arcade.Window):
         self.processing_time = 0
         self.draw_time = 0
 
+        # Start 'state' will be showing the first page of instructions.
+        self.current_state = INSTRUCTIONS_PAGE_0
+
+        self.instructions = []
+        texture = arcade.load_texture("images/instructions-01.png")
+        self.instructions.append(texture)
+
         arcade.set_background_color(arcade.color.BLACK)
 
     def setup(self):
+        self.current_state = INSTRUCTIONS_PAGE_0
+
         self.level_list = create_levels()
 
         self.player_list = arcade.SpriteList()
@@ -57,8 +66,16 @@ class MyGame(arcade.Window):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                          self.current_level.wall_list)
+    def draw_instructions_page(self, page_number):
+        """
+        Draw an instruction page. Load the page as an image.
+        """
+        page_texture = self.instructions[page_number]
+        arcade.draw_texture_rectangle(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2,
+                                      page_texture.width,
+                                      page_texture.height, page_texture, 0)
 
-    def on_draw(self):
+    def draw_game(self):
         """ Render the screen. """
 
         # Start timing how long this takes
@@ -96,43 +113,66 @@ class MyGame(arcade.Window):
 
         self.draw_time = timeit.default_timer() - draw_start_time
 
+    def on_draw(self):
+
+        # This command has to happen before we start drawing
+        arcade.start_render()
+
+        if self.current_state == INSTRUCTIONS_PAGE_0:
+            self.draw_instructions_page(0)
+
+        elif self.current_state == INSTRUCTIONS_PAGE_1:
+            self.draw_instructions_page(1)
+
+        elif self.current_state == GAME_RUNNING:
+            self.draw_game()
+
+        else:
+            self.draw_game()
+            self.draw_game_over()
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
-        if key == arcade.key.W:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.S:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.A:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.D:
-            self.player_sprite.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
-            if len(stair_hit_list) == 0:
-                print("There are no stairs down here.")
-            elif stair_hit_list[0].tag == "Up":
-                print("These are UP stairs, not down stairs.")
-            else:
-                self.player_sprite.center_x = stair_hit_list[0].center_x
-                self.player_sprite.center_y = stair_hit_list[0].center_y
-                self.current_level_no += 1
-                self.current_level = self.level_list[self.current_level_no]
-                self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                                 self.current_level.wall_list)
-        elif key == arcade.key.UP:
-            stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
-            if len(stair_hit_list) == 0:
-                print("There are no stairs down here.")
-            elif stair_hit_list[0].tag == "Down":
-                print("These are DOWN stairs, not up stairs.")
-            else:
-                self.player_sprite.center_x = stair_hit_list[0].center_x
-                self.player_sprite.center_y = stair_hit_list[0].center_y
-                self.current_level_no -= 1
-                self.current_level = self.level_list[self.current_level_no]
-                self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                                 self.current_level.wall_list)
+        if self.current_state == INSTRUCTIONS_PAGE_0:
+            if key == arcade.key.SPACE:
+                self.current_state = GAME_RUNNING
+
+        elif self.current_state == GAME_RUNNING:
+            if key == arcade.key.W:
+                self.player_sprite.change_y = MOVEMENT_SPEED
+            elif key == arcade.key.S:
+                self.player_sprite.change_y = -MOVEMENT_SPEED
+            elif key == arcade.key.A:
+                self.player_sprite.change_x = -MOVEMENT_SPEED
+            elif key == arcade.key.D:
+                self.player_sprite.change_x = MOVEMENT_SPEED
+            elif key == arcade.key.DOWN:
+                stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
+                if len(stair_hit_list) == 0:
+                    print("There are no stairs down here.")
+                elif stair_hit_list[0].tag == "Up":
+                    print("These are UP stairs, not down stairs.")
+                else:
+                    self.player_sprite.center_x = stair_hit_list[0].center_x
+                    self.player_sprite.center_y = stair_hit_list[0].center_y
+                    self.current_level_no += 1
+                    self.current_level = self.level_list[self.current_level_no]
+                    self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                                     self.current_level.wall_list)
+            elif key == arcade.key.UP:
+                stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
+                if len(stair_hit_list) == 0:
+                    print("There are no stairs down here.")
+                elif stair_hit_list[0].tag == "Down":
+                    print("These are DOWN stairs, not up stairs.")
+                else:
+                    self.player_sprite.center_x = stair_hit_list[0].center_x
+                    self.player_sprite.center_y = stair_hit_list[0].center_y
+                    self.current_level_no -= 1
+                    self.current_level = self.level_list[self.current_level_no]
+                    self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                                     self.current_level.wall_list)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
