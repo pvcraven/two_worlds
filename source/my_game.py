@@ -114,8 +114,12 @@ class MyGame(arcade.Window):
             elif stair_hit_list[0].tag == "Up":
                 print("These are UP stairs, not down stairs.")
             else:
+                self.player_sprite.center_x = stair_hit_list[0].center_x
+                self.player_sprite.center_y = stair_hit_list[0].center_y
                 self.current_level_no += 1
                 self.current_level = self.level_list[self.current_level_no]
+                self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                                 self.current_level.wall_list)
         elif key == arcade.key.UP:
             stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
             if len(stair_hit_list) == 0:
@@ -123,8 +127,12 @@ class MyGame(arcade.Window):
             elif stair_hit_list[0].tag == "Down":
                 print("These are DOWN stairs, not up stairs.")
             else:
+                self.player_sprite.center_x = stair_hit_list[0].center_x
+                self.player_sprite.center_y = stair_hit_list[0].center_y
                 self.current_level_no -= 1
                 self.current_level = self.level_list[self.current_level_no]
+                self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                                 self.current_level.wall_list)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """

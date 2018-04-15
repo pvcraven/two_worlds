@@ -1,28 +1,41 @@
 import arcade
+import random
 
 from constants import  *
 from level import Level
 from level_1 import get_level_1_array
+from level_2 import get_level_2_array
+from stairs import Stairs
 
 
 def create_stairs(level_list):
 
     for level in level_list:
         level.stair_list = arcade.SpriteList()
-    # # Place the down stairs
-    # placed = False
-    # while not placed:
-    #     row = random.randrange(dg.height)
-    #     column = random.randrange(dg.width)
-    #     value = dg.dungeon[row][column]
-    #     if value != '#':
-    #         placed = True
-    #         stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
-    #         stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-    #         stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-    #         stairs.tag = "Down"
-    #         stair_list.append(stairs)
-    #
+
+    # Place the down stairs
+    placed = False
+    while not placed:
+        row = random.randrange(GRID_HEIGHT)
+        column = random.randrange(GRID_WIDTH)
+        value_0 = level_list[0].grid[row][column]
+        value_1 = level_list[1].grid[row][column]
+        if value_0 == 0 and value_1 == 0:
+            placed = True
+            stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
+            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+            stairs.tag = "Down"
+            level_list[0].stair_list.append(stairs)
+
+            stairs = Stairs("images/stairs_up.png", WALL_SPRITE_SCALING)
+            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+            stairs.tag = "Up"
+            level_list[1].stair_list.append(stairs)
+
+            print("Placed stairs")
+
 
 
 
@@ -49,7 +62,6 @@ def create_walls(level_list):
                 wall.center_x = column_mid * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
                 wall.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
                 wall.width = WALL_SPRITE_SIZE * column_count
-                print(f"({wall.center_x}, {wall.center_y}) - {wall.width}")
 
                 level.wall_list.append(wall)
 
@@ -58,6 +70,10 @@ def create_levels():
 
     level = Level()
     level.grid = get_level_1_array()
+    level_list.append(level)
+
+    level = Level()
+    level.grid = get_level_2_array()
     level_list.append(level)
 
     create_walls(level_list)

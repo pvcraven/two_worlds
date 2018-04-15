@@ -230,6 +230,5 @@ def get_level_1_array():
             if value == '#':
                 grid[row][column] = 1
 
-    print_grid(grid)
     return grid
 
