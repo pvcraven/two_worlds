@@ -16,6 +16,7 @@ import math
 
 from constants import *
 from level import Level
+from stairs import Stairs
 
 
 class Room:
@@ -220,10 +221,25 @@ class RLDungeonGenerator:
 
 def get_level_1():
     wall_list = arcade.SpriteList()
+    stair_list = arcade.SpriteList()
 
     # Create cave system using a 2D grid
     dg = RLDungeonGenerator(GRID_WIDTH, GRID_HEIGHT)
     dg.generate_map()
+
+    # Place the down stairs
+    placed = False
+    while not placed:
+        row = random.randrange(dg.height)
+        column = random.randrange(dg.width)
+        value = dg.dungeon[row][column]
+        if value != '#':
+            placed = True
+            stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
+            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+            stairs.tag = "Down"
+            stair_list.append(stairs)
 
     # Create sprites based on 2D grid
     if not MERGE_SPRITES:
@@ -232,7 +248,7 @@ def get_level_1():
         for row in range(dg.height):
             for column in range(dg.width):
                 value = dg.dungeon[row][column]
-                if value.sqr == '#':
+                if value == '#':
                     wall = arcade.Sprite("images/wall-01.png", WALL_SPRITE_SCALING)
                     wall.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
                     wall.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
@@ -264,4 +280,5 @@ def get_level_1():
 
     level = Level()
     level.wall_list = wall_list
+    level.stair_list = stair_list
     return level

@@ -15,7 +15,9 @@ class MyGame(arcade.Window):
         super().__init__(width, height)
 
         self.grid = None
-        self.wall_list = None
+        self.level_list = None
+        self.current_level = None
+        self.current_level_no = 0
         self.player_list = None
         self.player_sprite = None
         self.view_bottom = 0
@@ -28,14 +30,14 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.BLACK)
 
     def setup(self):
-        self.level = []
-        self.wall_list = arcade.SpriteList()
-        self.player_list = arcade.SpriteList()
+        self.level_list = []
 
         level_1 = get_level_1()
 
+        self.player_list = arcade.SpriteList()
+
         # Start on level 1
-        self.wall_list = level_1.wall_list
+        self.current_level = level_1
 
         # Set up the player
         self.player_sprite = arcade.Sprite("images/character.png", PLAYER_SPRITE_SCALING)
@@ -50,13 +52,13 @@ class MyGame(arcade.Window):
             self.player_sprite.center_y = random.randrange(AREA_HEIGHT)
 
             # Are we in a wall?
-            walls_hit = arcade.check_for_collision_with_list(self.player_sprite, self.wall_list)
+            walls_hit = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.wall_list)
             if len(walls_hit) == 0:
                 # Not in a wall! Success!
                 placed = True
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                         self.wall_list)
+                                                         self.current_level.wall_list)
 
     def on_draw(self):
         """ Render the screen. """
@@ -69,11 +71,12 @@ class MyGame(arcade.Window):
         arcade.start_render()
 
         # Draw the sprites
-        self.wall_list.draw()
+        self.current_level.wall_list.draw()
+        self.current_level.stair_list.draw()
         self.player_list.draw()
 
         # Draw info on the screen
-        sprite_count = len(self.wall_list)
+        sprite_count = len(self.current_level.wall_list)
 
         output = f"Sprite Count: {sprite_count}"
         arcade.draw_text(output,
@@ -98,27 +101,47 @@ class MyGame(arcade.Window):
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.W:
             self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.S:
             self.player_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.A:
             self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.D:
             self.player_sprite.change_x = MOVEMENT_SPEED
+        elif key == arcade.key.DOWN:
+            stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
+            if len(stair_hit_list) == 0:
+                print("There are no stairs down here.")
+            elif stair_hit_list[0].tag == "Up":
+                print("These are UP stairs, not down stairs.")
+            else:
+                self.current_level_no += 1
+                self.current_level = self.level_list[self.current_level_no]
+        elif key == arcade.key.UP:
+            stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
+            if len(stair_hit_list) == 0:
+                print("There are no stairs down here.")
+            elif stair_hit_list[0].tag == "Down":
+                print("These are DOWN stairs, not up stairs.")
+            else:
+                self.current_level_no -= 1
+                self.current_level = self.level_list[self.current_level_no]
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        if key == arcade.key.UP or key == arcade.key.DOWN:
+        if key == arcade.key.W or key == arcade.key.S:
             self.player_sprite.change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+        elif key == arcade.key.A or key == arcade.key.D:
             self.player_sprite.change_x = 0
 
     def update(self, delta_time):
         """ Movement and game logic """
 
         start_time = timeit.default_timer()
+
+        # print(f"{self.player_sprite.center_x:.0f}, {self.player_sprite.center_y:.0f} - {self.stair_list[0].center_x:.0f}, {self.stair_list[0].center_y:.0f}")
 
         # Call update on all sprites (The sprites don't do much in this
         # example though.)
