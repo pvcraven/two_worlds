@@ -1,3 +1,8 @@
+"""
+Parts of this code from:
+http://arcade.academy/examples/maze_depth_first.html#depth-first-maze
+
+"""
 import random
 
 from constants import *
