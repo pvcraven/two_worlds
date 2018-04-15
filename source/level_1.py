@@ -11,12 +11,11 @@ https://github.com/DanaL/RLDungeonGenerator
 """
 
 import random
-import arcade
 import math
 
 from constants import *
-from level import Level
-from stairs import Stairs
+from level import create_grid
+from level import print_grid
 
 
 class Room:
@@ -219,66 +218,18 @@ class RLDungeonGenerator:
         self.connect_rooms()
 
 
-def get_level_1():
-    wall_list = arcade.SpriteList()
-    stair_list = arcade.SpriteList()
-
+def get_level_1_array():
     # Create cave system using a 2D grid
     dg = RLDungeonGenerator(GRID_WIDTH, GRID_HEIGHT)
     dg.generate_map()
+    grid = create_grid(GRID_WIDTH, GRID_HEIGHT)
 
-    # Place the down stairs
-    placed = False
-    while not placed:
-        row = random.randrange(dg.height)
-        column = random.randrange(dg.width)
-        value = dg.dungeon[row][column]
-        if value != '#':
-            placed = True
-            stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
-            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.tag = "Down"
-            stair_list.append(stairs)
+    for row in range(dg.height):
+        for column in range(dg.width):
+            value = dg.dungeon[row][column]
+            if value == '#':
+                grid[row][column] = 1
 
-    # Create sprites based on 2D grid
-    if not MERGE_SPRITES:
-        # This is the simple-to-understand method. Each grid location
-        # is a sprite.
-        for row in range(dg.height):
-            for column in range(dg.width):
-                value = dg.dungeon[row][column]
-                if value == '#':
-                    wall = arcade.Sprite("images/wall-01.png", WALL_SPRITE_SCALING)
-                    wall.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-                    wall.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-                    wall_list.append(wall)
-    else:
-        # This uses new Arcade 1.3.1 features, that allow me to create a
-        # larger sprite with a repeating texture. So if there are multiple
-        # cells in a row with a wall, we merge them into one sprite, with a
-        # repeating texture for each cell. This reduces our sprite count.
-        for row in range(dg.height):
-            column = 0
-            while column < dg.width:
-                while column < dg.width and dg.dungeon[row][column] != '#':
-                    column += 1
-                start_column = column
-                while column < dg.width and dg.dungeon[row][column] == '#':
-                    column += 1
-                end_column = column - 1
+    print_grid(grid)
+    return grid
 
-                column_count = end_column - start_column + 1
-                column_mid = (start_column + end_column) / 2
-
-                wall = arcade.Sprite("images/wall-01.png", WALL_SPRITE_SCALING,
-                                     repeat_count_x=column_count)
-                wall.center_x = column_mid * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-                wall.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-                wall.width = WALL_SPRITE_SIZE * column_count
-                wall_list.append(wall)
-
-    level = Level()
-    level.wall_list = wall_list
-    level.stair_list = stair_list
-    return level

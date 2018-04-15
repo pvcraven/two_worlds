@@ -3,7 +3,7 @@ import random
 import timeit
 
 from constants import *
-from level_1 import get_level_1
+from create_levels import create_levels
 
 
 class MyGame(arcade.Window):
@@ -30,14 +30,12 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.BLACK)
 
     def setup(self):
-        self.level_list = []
-
-        level_1 = get_level_1()
+        self.level_list = create_levels()
 
         self.player_list = arcade.SpriteList()
 
         # Start on level 1
-        self.current_level = level_1
+        self.current_level = self.level_list[self.current_level_no]
 
         # Set up the player
         self.player_sprite = arcade.Sprite("images/character.png", PLAYER_SPRITE_SCALING)
