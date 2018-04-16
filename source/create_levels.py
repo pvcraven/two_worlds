@@ -4,6 +4,7 @@ import random
 from constants import  *
 from level import Level
 from level_1 import get_level_1_array
+from level_1 import add_level_1_creatures
 from level_2 import get_level_2_array
 from level_3 import get_level_3_array
 from stairs import Stairs
@@ -59,10 +60,6 @@ def create_stairs(level_list):
             stairs.tag = "Up"
             level_list[2].stair_list.append(stairs)
 
-            print("Placed stairs")
-
-
-
 
 def create_walls(level_list):
 
@@ -90,6 +87,7 @@ def create_walls(level_list):
 
                 level.wall_list.append(wall)
 
+
 def create_levels():
     level_list = []
 
@@ -106,6 +104,9 @@ def create_levels():
     level_list.append(level)
 
     create_walls(level_list)
+
+    add_level_1_creatures(level_list[0])
+
     create_stairs(level_list)
 
     return level_list

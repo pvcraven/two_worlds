@@ -9,6 +9,7 @@ class Level():
         self.grid = None
         self.wall_list = None
         self.stair_list = None
+        self.creature_list = None
 
 def print_grid(grid):
     for row in grid:

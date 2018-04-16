@@ -1,10 +1,11 @@
 import arcade
 import random
 import timeit
+import os
 
 from constants import *
 from create_levels import create_levels
-
+from randomly_place_sprite import randomly_place_sprite
 
 class MyGame(arcade.Window):
     """
@@ -13,6 +14,13 @@ class MyGame(arcade.Window):
 
     def __init__(self, width, height):
         super().__init__(width, height)
+
+        # Set the working directory (where we expect to find files) to the same
+        # directory this .py file is in. You can leave this out of your own
+        # code, but it is needed to easily run the examples using "python -m"
+        # as mentioned at the top of this program.
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(file_path)
 
         self.grid = None
         self.level_list = None
@@ -50,19 +58,7 @@ class MyGame(arcade.Window):
         self.player_sprite = arcade.Sprite("images/character.png", PLAYER_SPRITE_SCALING)
         self.player_list.append(self.player_sprite)
 
-        # Randomly place the player. If we are in a wall, repeat until we aren't.
-        placed = False
-        while not placed:
-
-            # Randomly position
-            self.player_sprite.center_x = random.randrange(AREA_WIDTH)
-            self.player_sprite.center_y = random.randrange(AREA_HEIGHT)
-
-            # Are we in a wall?
-            walls_hit = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.wall_list)
-            if len(walls_hit) == 0:
-                # Not in a wall! Success!
-                placed = True
+        randomly_place_sprite(self.player_sprite, self.current_level.wall_list)
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                          self.current_level.wall_list)
@@ -88,6 +84,7 @@ class MyGame(arcade.Window):
         # Draw the sprites
         self.current_level.wall_list.draw()
         self.current_level.stair_list.draw()
+        self.current_level.creature_list.draw()
         self.player_list.draw()
 
         # Draw info on the screen
@@ -183,15 +180,20 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
 
     def update(self, delta_time):
+
+        if not self.current_state == GAME_RUNNING:
+            return
+
         """ Movement and game logic """
 
         start_time = timeit.default_timer()
 
         # print(f"{self.player_sprite.center_x:.0f}, {self.player_sprite.center_y:.0f} - {self.stair_list[0].center_x:.0f}, {self.stair_list[0].center_y:.0f}")
 
-        # Call update on all sprites (The sprites don't do much in this
-        # example though.)
         self.physics_engine.update()
+
+        for creature in self.current_level.creature_list:
+            creature.update()
 
         # --- Manage Scrolling ---
 

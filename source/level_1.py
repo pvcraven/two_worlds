@@ -12,11 +12,13 @@ https://github.com/DanaL/RLDungeonGenerator
 
 import random
 import math
+import arcade
 
 from constants import *
 from level import create_grid
 from level import print_grid
-
+from wander_sprite import WanderSprite
+from randomly_place_sprite import randomly_place_sprite
 
 class Room:
     def __init__(self, r, c, h, w):
@@ -231,4 +233,14 @@ def get_level_1_array():
                 grid[row][column] = 1
 
     return grid
+
+def add_level_1_creatures(level):
+
+    level.creature_list = arcade.SpriteList()
+
+    librarian = WanderSprite("images/librarian.png", CREATURE_SPRITE_SCALING)
+    librarian.physics_engine = arcade.PhysicsEngineSimple(librarian, level.wall_list)
+    randomly_place_sprite(librarian, level.wall_list)
+
+    level.creature_list.append(librarian)
 
