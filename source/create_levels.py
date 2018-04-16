@@ -6,7 +6,9 @@ from level import Level
 from level_1 import get_level_1_array
 from level_1 import add_level_1_creatures
 from level_2 import get_level_2_array
+from level_2 import add_level_2_creatures
 from level_3 import get_level_3_array
+from level_3 import add_level_3_creatures
 from stairs import Stairs
 
 
@@ -106,6 +108,8 @@ def create_levels():
     create_walls(level_list)
 
     add_level_1_creatures(level_list[0])
+    add_level_2_creatures(level_list[1])
+    add_level_3_creatures(level_list[2])
 
     create_stairs(level_list)
 

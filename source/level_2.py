@@ -4,6 +4,7 @@ http://arcade.academy/examples/maze_depth_first.html#depth-first-maze
 
 """
 import random
+import arcade
 
 from constants import *
 
@@ -47,3 +48,7 @@ def get_level_2_array():
     walk(random.randrange(w), random.randrange(h))
 
     return maze
+
+def add_level_2_creatures(level):
+
+    level.creature_list = arcade.SpriteList()

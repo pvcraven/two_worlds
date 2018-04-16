@@ -58,10 +58,20 @@ class MyGame(arcade.Window):
         self.player_sprite = arcade.Sprite("images/character.png", PLAYER_SPRITE_SCALING)
         self.player_list.append(self.player_sprite)
 
-        randomly_place_sprite(self.player_sprite, self.current_level.wall_list)
+        for level in self.level_list:
+            for wall in level.wall_list:
+                level.all_obstacles.append(wall)
+            for creature in level.creature_list:
+                level.all_obstacles.append(creature)
+            level.all_obstacles.append(self.player_sprite)
+
+        randomly_place_sprite(self.player_sprite, self.current_level.all_obstacles)
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
-                                                         self.current_level.wall_list)
+                                                         self.current_level.all_obstacles)
+
+        # self.level_list[0].wall_list.append(self.player_sprite)
+
     def draw_instructions_page(self, page_number):
         """
         Draw an instruction page. Load the page as an image.
@@ -191,9 +201,13 @@ class MyGame(arcade.Window):
         # print(f"{self.player_sprite.center_x:.0f}, {self.player_sprite.center_y:.0f} - {self.stair_list[0].center_x:.0f}, {self.stair_list[0].center_y:.0f}")
 
         self.physics_engine.update()
+        self.player_sprite.center_x = int(self.player_sprite.center_x)
+        self.player_sprite.center_y = int(self.player_sprite.center_y)
 
         for creature in self.current_level.creature_list:
             creature.update()
+            creature.center_x = int(creature.center_x)
+            creature.center_y = int(creature.center_y)
 
         # --- Manage Scrolling ---
 
@@ -233,5 +247,3 @@ class MyGame(arcade.Window):
 
         # Save the time it took to do this.
         self.processing_time = timeit.default_timer() - start_time
-
-

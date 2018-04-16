@@ -4,6 +4,7 @@ http://arcade.academy/examples/procedural_caves_cellular.html#procedural-caves-c
 
 """
 import random
+import arcade
 
 from level import create_grid
 from constants import *
@@ -80,3 +81,8 @@ def get_level_3_array():
         grid[y][GRID_WIDTH-1] = 1
 
     return grid
+
+
+def add_level_3_creatures(level):
+
+    level.creature_list = arcade.SpriteList()
