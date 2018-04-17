@@ -238,9 +238,14 @@ def add_level_1_creatures(level):
 
     level.creature_list = arcade.SpriteList()
 
-    for i in range(20):
+    for i in range(2):
         librarian = WanderSprite("images/librarian.png", CREATURE_SPRITE_SCALING)
         librarian.physics_engine = arcade.PhysicsEngineSimple(librarian, level.all_obstacles)
         randomly_place_sprite(librarian, level.wall_list)
         level.creature_list.append(librarian)
 
+    key = arcade.Sprite("images/key-01.png", OBJECT_SPRITE_SCALING)
+    key.tag = "key-01"
+    randomly_place_sprite(key, level.wall_list)
+    print(f"Placed key {key.center_x}, {key.center_y}")
+    level.objects_list.append(key)

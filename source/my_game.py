@@ -35,6 +35,7 @@ class MyGame(arcade.Window):
 
         self.processing_time = 0
         self.draw_time = 0
+        self.message_queue = None
 
         # Start 'state' will be showing the first page of instructions.
         self.current_state = INSTRUCTIONS_PAGE_0
@@ -47,6 +48,7 @@ class MyGame(arcade.Window):
 
     def setup(self):
         self.current_state = INSTRUCTIONS_PAGE_0
+        self.message_queue = []
 
         self.level_list = create_levels()
 
@@ -96,6 +98,7 @@ class MyGame(arcade.Window):
         self.current_level.wall_list.draw()
         self.current_level.stair_list.draw()
         self.current_level.creature_list.draw()
+        self.current_level.objects_list.draw()
         self.player_list.draw()
 
         # Draw info on the screen
@@ -124,6 +127,26 @@ class MyGame(arcade.Window):
                                           self.view_left + WINDOW_WIDTH - 1,
                                           self.view_bottom + PLAYER_SPRITE_SIZE * 2,
                                           self.view_bottom, arcade.color.BLACK)
+
+        x_position = self.view_left
+        for item in self.player_sprite.inventory:
+            item.bottom = self.view_bottom
+            item.left = x_position
+            x_position += item.width
+            item.draw()
+
+        # Draw messages
+        if len(self.message_queue) > 0:
+            center_x = WINDOW_WIDTH // 2 + self.view_left
+            center_y = WINDOW_HEIGHT // 2 + self.view_bottom
+            width = 400
+            arcade.draw_rectangle_filled(center_x, center_y,
+                                         width, 200, arcade.color.BLACK)
+            arcade.draw_rectangle_outline(center_x, center_y,
+                                          width, 200, arcade.color.WHITE, 2)
+            arcade.draw_text(self.message_queue[0],
+                             center_x, center_y, arcade.color.WHITE, 14, width=width, align="center",
+                             anchor_x="center", anchor_y="center")
 
         self.draw_time = timeit.default_timer() - draw_start_time
 
@@ -161,6 +184,9 @@ class MyGame(arcade.Window):
                 self.player_sprite.change_x = -MOVEMENT_SPEED
             elif key == arcade.key.D:
                 self.player_sprite.change_x = MOVEMENT_SPEED
+            elif key == arcade.key.SPACE:
+                if len(self.message_queue) > 0:
+                    self.message_queue.pop(0)
             elif key == arcade.key.DOWN:
                 stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
                 if len(stair_hit_list) == 0:
@@ -168,6 +194,14 @@ class MyGame(arcade.Window):
                 elif stair_hit_list[0].tag == "Up":
                     print("These are UP stairs, not down stairs.")
                 else:
+                    has_key = False
+                    for inventory_item in self.player_sprite.inventory:
+                        new_level = self.current_level_no + 1
+                        if inventory_item.tag == f"key-{new_level:02}":
+                            has_key = True
+                    if not has_key:
+                        self.message_queue.append("You don't have the key for the stairway door.")
+                        return
                     self.player_sprite.center_x = stair_hit_list[0].center_x
                     self.player_sprite.center_y = stair_hit_list[0].center_y
                     self.current_level_no += 1
@@ -197,24 +231,33 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
 
     def update(self, delta_time):
+        """ Movement and game logic """
 
         if not self.current_state == GAME_RUNNING:
             return
 
-        """ Movement and game logic """
+        if len(self.message_queue) > 0:
+            return
+
 
         start_time = timeit.default_timer()
 
-        # print(f"{self.player_sprite.center_x:.0f}, {self.player_sprite.center_y:.0f} - {self.stair_list[0].center_x:.0f}, {self.stair_list[0].center_y:.0f}")
-
+        # Move player
         self.physics_engine.update()
         self.player_sprite.center_x = int(self.player_sprite.center_x)
         self.player_sprite.center_y = int(self.player_sprite.center_y)
 
+        # Move creatures
         for creature in self.current_level.creature_list:
             creature.update()
             creature.center_x = int(creature.center_x)
             creature.center_y = int(creature.center_y)
+
+        # Pick up items
+        objects_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.objects_list)
+        for my_object in objects_hit_list:
+            self.current_level.objects_list.remove(my_object)
+            self.player_sprite.inventory.append(my_object)
 
         # --- Manage Scrolling ---
 

@@ -1,8 +1,16 @@
 import arcade
 
+
 def create_grid(width, height):
     """ Create a two-dimensional grid of specified size. """
     return [[0 for x in range(width)] for y in range(height)]
+
+
+def print_grid(grid):
+    for row in grid:
+        for cell in row:
+            print(cell, end="")
+        print()
 
 
 class Level:
@@ -12,10 +20,4 @@ class Level:
         self.all_obstacles = arcade.SpriteList()
         self.stair_list = arcade.SpriteList()
         self.creature_list = arcade.SpriteList()
-
-
-def print_grid(grid):
-    for row in grid:
-        for cell in row:
-            print(cell, end="")
-        print()
+        self.objects_list = arcade.SpriteList()
