@@ -6,6 +6,7 @@ import os
 from constants import *
 from create_levels import create_levels
 from randomly_place_sprite import randomly_place_sprite
+from player_sprite import PlayerSprite
 
 class MyGame(arcade.Window):
     """
@@ -55,7 +56,7 @@ class MyGame(arcade.Window):
         self.current_level = self.level_list[self.current_level_no]
 
         # Set up the player
-        self.player_sprite = arcade.Sprite("images/character.png", PLAYER_SPRITE_SCALING)
+        self.player_sprite = PlayerSprite("images/character.png", PLAYER_SPRITE_SCALING)
         self.player_list.append(self.player_sprite)
 
         for level in self.level_list:
@@ -117,6 +118,12 @@ class MyGame(arcade.Window):
                          self.view_left + 20,
                          WINDOW_HEIGHT - 60 + self.view_bottom,
                          arcade.color.WHITE, 16)
+
+        # Draw inventory
+        arcade.draw_lrtb_rectangle_filled(self.view_left,
+                                          self.view_left + WINDOW_WIDTH - 1,
+                                          self.view_bottom + PLAYER_SPRITE_SIZE * 2,
+                                          self.view_bottom, arcade.color.BLACK)
 
         self.draw_time = timeit.default_timer() - draw_start_time
 
