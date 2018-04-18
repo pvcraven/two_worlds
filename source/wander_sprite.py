@@ -1,7 +1,8 @@
 import arcade
 import random
 
-class WanderSprite(arcade.Sprite):
+
+class CreatureSprite(arcade.Sprite):\
 
     def __init__(self, filename, sprite_scaling):
 
@@ -11,6 +12,16 @@ class WanderSprite(arcade.Sprite):
         self.wall_list = None
         self.direction = 0
         self.physics_engine = None
+        self.dialog_no = 0
+        self.dialog_list = []
+
+    def get_dialog(self):
+        if self.dialog_no < len(self.dialog_list):
+            self.dialog_no += 1
+            return self.dialog_list[self.dialog_no - 1]
+
+
+class WanderSprite(CreatureSprite):
 
     def update(self):
         self.physics_engine.update()

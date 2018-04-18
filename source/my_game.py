@@ -7,6 +7,8 @@ from constants import *
 from create_levels import create_levels
 from randomly_place_sprite import randomly_place_sprite
 from player_sprite import PlayerSprite
+from utility import get_closest_sprite
+
 
 class MyGame(arcade.Window):
     """
@@ -168,6 +170,21 @@ class MyGame(arcade.Window):
             self.draw_game()
             self.draw_game_over()
 
+    def talk(self):
+        nearest_sprite, distance = get_closest_sprite(self.player_sprite, self.current_level.creature_list)
+
+        if distance < PLAYER_SPRITE_SIZE * 3:
+            dialog = nearest_sprite.get_dialog()
+            if dialog is not None:
+                self.message_queue.append(dialog)
+            else:
+                self.message_queue.append("What?")
+        else:
+            self.message_queue.append("No one near by")
+
+
+
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
@@ -176,7 +193,13 @@ class MyGame(arcade.Window):
                 self.current_state = GAME_RUNNING
 
         elif self.current_state == GAME_RUNNING:
-            if key == arcade.key.W:
+            if key == arcade.key.SPACE and len(self.message_queue) > 0:
+                self.message_queue.pop(0)
+            elif len(self.message_queue) > 0:
+                return
+            elif key == arcade.key.SPACE:
+                self.talk()
+            elif key == arcade.key.W:
                 self.player_sprite.change_y = MOVEMENT_SPEED
             elif key == arcade.key.S:
                 self.player_sprite.change_y = -MOVEMENT_SPEED
@@ -184,9 +207,6 @@ class MyGame(arcade.Window):
                 self.player_sprite.change_x = -MOVEMENT_SPEED
             elif key == arcade.key.D:
                 self.player_sprite.change_x = MOVEMENT_SPEED
-            elif key == arcade.key.SPACE:
-                if len(self.message_queue) > 0:
-                    self.message_queue.pop(0)
             elif key == arcade.key.DOWN:
                 stair_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.stair_list)
                 if len(stair_hit_list) == 0:
