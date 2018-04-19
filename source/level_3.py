@@ -8,6 +8,7 @@ import arcade
 
 from level import create_grid
 from constants import *
+from randomly_place_sprite import randomly_place_sprite
 
 # Parameters for cellular automata
 CHANCE_TO_START_ALIVE = 0.4
@@ -86,3 +87,9 @@ def get_level_3_array():
 def add_level_3_creatures(level):
 
     level.creature_list = arcade.SpriteList()
+
+    scepter = arcade.Sprite("images/scepter.png", OBJECT_SPRITE_SCALING)
+    scepter.tag = "scepter"
+    randomly_place_sprite(scepter, level.wall_list)
+    print(f"Placed scepter {scepter.center_x}, {scepter.center_y}")
+    level.objects_list.append(scepter)

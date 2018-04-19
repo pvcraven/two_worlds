@@ -17,7 +17,8 @@ import arcade
 from constants import *
 from level import create_grid
 from level import print_grid
-from wander_sprite import WanderSprite
+from wander_sprite import LibrarianSprite
+from wander_sprite import CustodianSprite
 from randomly_place_sprite import randomly_place_sprite
 
 class Room:
@@ -238,20 +239,14 @@ def add_level_1_creatures(level):
 
     level.creature_list = arcade.SpriteList()
 
-    librarian = WanderSprite("images/librarian.png", CREATURE_SPRITE_SCALING)
+    custodian = CustodianSprite("images/librarian.png", CREATURE_SPRITE_SCALING, level)
+    custodian.physics_engine = arcade.PhysicsEngineSimple(custodian, level.all_obstacles)
+    randomly_place_sprite(custodian, level.wall_list)
+    level.creature_list.append(custodian)
+
+    librarian = LibrarianSprite("images/librarian.png", CREATURE_SPRITE_SCALING, custodian)
     librarian.dialog_list = ["Hi, I'm the librarian."]
     librarian.physics_engine = arcade.PhysicsEngineSimple(librarian, level.all_obstacles)
     randomly_place_sprite(librarian, level.wall_list)
     level.creature_list.append(librarian)
 
-    librarian = WanderSprite("images/librarian.png", CREATURE_SPRITE_SCALING)
-    librarian.dialog_list = ["Hi, I'm the custodian."]
-    librarian.physics_engine = arcade.PhysicsEngineSimple(librarian, level.all_obstacles)
-    randomly_place_sprite(librarian, level.wall_list)
-    level.creature_list.append(librarian)
-
-    key = arcade.Sprite("images/key-01.png", OBJECT_SPRITE_SCALING)
-    key.tag = "key-01"
-    randomly_place_sprite(key, level.wall_list)
-    print(f"Placed key {key.center_x}, {key.center_y}")
-    level.objects_list.append(key)

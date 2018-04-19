@@ -174,7 +174,7 @@ class MyGame(arcade.Window):
         nearest_sprite, distance = get_closest_sprite(self.player_sprite, self.current_level.creature_list)
 
         if distance < PLAYER_SPRITE_SIZE * 3:
-            dialog = nearest_sprite.get_dialog()
+            dialog = nearest_sprite.get_dialog(self.player_sprite)
             if dialog is not None:
                 self.message_queue.append(dialog)
             else:
