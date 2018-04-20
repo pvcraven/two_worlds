@@ -7,8 +7,11 @@ import random
 import arcade
 
 from level import create_grid
+from level import Level
 from constants import *
 from randomly_place_sprite import randomly_place_sprite
+from wander_sprite import DragonSprite
+
 
 # Parameters for cellular automata
 CHANCE_TO_START_ALIVE = 0.4
@@ -84,7 +87,7 @@ def get_level_3_array():
     return grid
 
 
-def add_level_3_creatures(level):
+def add_level_3_creatures(level: Level, player_sprite: arcade.Sprite):
 
     level.creature_list = arcade.SpriteList()
 
@@ -93,3 +96,8 @@ def add_level_3_creatures(level):
     randomly_place_sprite(scepter, level.wall_list)
     print(f"Placed scepter {scepter.center_x}, {scepter.center_y}")
     level.objects_list.append(scepter)
+
+    dragon = DragonSprite("images/dragon.png", CREATURE_SPRITE_SCALING, player_sprite)
+    dragon.physics_engine = arcade.PhysicsEngineSimple(dragon, level.all_obstacles)
+    randomly_place_sprite(dragon, level.wall_list)
+    level.creature_list.append(dragon)

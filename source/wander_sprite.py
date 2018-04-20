@@ -1,5 +1,6 @@
 import arcade
 import random
+import math
 
 from constants import *
 from player_sprite import PlayerSprite
@@ -93,3 +94,40 @@ class LibrarianSprite(WanderSprite):
             return "Ask the janitor for the key."
         else:
             return "Please hurry."
+
+class DragonSprite(WanderSprite):
+
+    def __init__(self, filename, sprite_scaling, player_sprite):
+
+        super().__init__(filename, sprite_scaling)
+        self.player_sprite = player_sprite
+
+    def get_dialog(self, player_sprite):
+            return "Roar."
+
+    def update(self):
+        super().update()
+
+        # First, calculate the angle to the player. We could do this
+        # only when the bullet fires, but in this case we will rotate
+        # the enemy to face the player each frame, so we'll do this
+        # each frame.
+
+        # Position the start at the enemy's current location
+        start_x = self.center_x
+        start_y = self.center_y
+
+        # Get the destination location for the bullet
+        dest_x = self.player_sprite.center_x
+        dest_y = self.player_sprite.center_y
+
+        # Do math to calculate how to get the bullet to the destination.
+        # Calculation the angle in radians between the start points
+        # and end points. This is the angle the bullet will travel.
+        x_diff = dest_x - start_x
+        y_diff = dest_y - start_y
+        angle = math.atan2(y_diff, x_diff)
+
+        # Set the enemy to face the player.
+        # self.angle = math.degrees(angle)-90
+

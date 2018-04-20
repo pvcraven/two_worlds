@@ -239,7 +239,7 @@ def add_level_1_creatures(level):
 
     level.creature_list = arcade.SpriteList()
 
-    custodian = CustodianSprite("images/librarian.png", CREATURE_SPRITE_SCALING, level)
+    custodian = CustodianSprite("images/custodian.png", CREATURE_SPRITE_SCALING, level)
     custodian.physics_engine = arcade.PhysicsEngineSimple(custodian, level.all_obstacles)
     randomly_place_sprite(custodian, level.wall_list)
     level.creature_list.append(custodian)

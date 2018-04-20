@@ -90,7 +90,7 @@ def create_walls(level_list):
                 level.wall_list.append(wall)
 
 
-def create_levels():
+def create_levels(player_sprite):
     level_list = []
 
     level = Level()
@@ -109,7 +109,7 @@ def create_levels():
 
     add_level_1_creatures(level_list[0])
     add_level_2_creatures(level_list[1])
-    add_level_3_creatures(level_list[2])
+    add_level_3_creatures(level_list[2], player_sprite)
 
     create_stairs(level_list)
 

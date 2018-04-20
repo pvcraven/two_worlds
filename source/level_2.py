@@ -52,7 +52,7 @@ def get_level_2_array():
     # Randomly open some extra passages
 
     count = 0
-    while count < 5:
+    while count < 7:
         x = random.randrange(2, GRID_WIDTH - 2)
         y = random.randrange(2, GRID_HEIGHT - 2)
         if maze[y][x] != 0 and maze[y-1][x] != 0 and maze[y+1][x]:

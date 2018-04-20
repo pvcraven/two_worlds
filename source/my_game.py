@@ -28,7 +28,7 @@ class MyGame(arcade.Window):
         self.grid = None
         self.level_list = None
         self.current_level = None
-        self.current_level_no = 0
+        self.current_level_no = 2
         self.player_list = None
         self.player_sprite = None
         self.view_bottom = 0
@@ -49,19 +49,19 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.BLACK)
 
     def setup(self):
+        self.player_list = arcade.SpriteList()
+        self.player_sprite = PlayerSprite("images/character.png", PLAYER_SPRITE_SCALING)
+        self.player_list.append(self.player_sprite)
+
         self.current_state = INSTRUCTIONS_PAGE_0
         self.message_queue = []
 
-        self.level_list = create_levels()
-
-        self.player_list = arcade.SpriteList()
+        self.level_list = create_levels(self.player_sprite)
 
         # Start on level 1
         self.current_level = self.level_list[self.current_level_no]
 
         # Set up the player
-        self.player_sprite = PlayerSprite("images/character.png", PLAYER_SPRITE_SCALING)
-        self.player_list.append(self.player_sprite)
 
         for level in self.level_list:
             for wall in level.wall_list:
@@ -181,9 +181,6 @@ class MyGame(arcade.Window):
                 self.message_queue.append("What?")
         else:
             self.message_queue.append("No one near by")
-
-
-
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
