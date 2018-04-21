@@ -203,11 +203,13 @@ class MyGame(arcade.Window):
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
+        # Instructions page
         if self.current_state == INSTRUCTIONS_PAGE_0:
             if key == arcade.key.SPACE:
                 self.current_state = GAME_RUNNING
                 arcade.set_background_color(self.current_level.background_color)
 
+        # Game is running
         elif self.current_state == GAME_RUNNING:
             if key == arcade.key.SPACE and len(self.message_queue) > 0:
                 self.message_queue.pop(0)
@@ -319,10 +321,11 @@ class MyGame(arcade.Window):
         self.physics_engine.update()
 
         # Move creatures
+        for level in self.level_list:
+            for creature in level.creature_list:
+                creature.update()
+
         for creature in self.current_level.creature_list:
-            creature.update()
-            creature.center_x = int(creature.center_x)
-            creature.center_y = int(creature.center_y)
             if creature.tag == "dragon" and random.randrange(100) == 0:
                 fireball = arcade.Sprite("images/fireball.png", 1)
                 fireball.tag = "fireball"
@@ -368,8 +371,15 @@ class MyGame(arcade.Window):
             if len(sprites_hit) > 0:
                 missile.kill()
 
+        # See if missile hit player
         sprites_hit = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.missile_list)
         if len(sprites_hit) > 0:
+            self.current_state = GAME_OVER
+
+        nearest_sprite, distance = get_closest_sprite(self.player_sprite, self.current_level.creature_list)
+
+        if distance < PLAYER_SPRITE_SIZE * 2 and nearest_sprite.tag == "skull":
+            self.message_queue.append("Ahh! Stay away from the undead!")
             self.current_state = GAME_OVER
 
         # --- Manage Scrolling ---

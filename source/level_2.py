@@ -8,7 +8,7 @@ import arcade
 
 from constants import *
 from randomly_place_sprite import randomly_place_sprite
-
+from wander_sprite import WanderSprite
 
 def _create_grid_with_cells(width, height):
     """ Create a grid with empty cells on odd row/column combinations. """
@@ -52,7 +52,7 @@ def get_level_2_array():
     # Randomly open some extra passages
 
     count = 0
-    while count < 7:
+    while count < 10:
         x = random.randrange(2, GRID_WIDTH - 2)
         y = random.randrange(2, GRID_HEIGHT - 2)
         if maze[y][x] != 0 and maze[y-1][x] != 0 and maze[y+1][x]:
@@ -68,9 +68,16 @@ def add_level_2_creatures(level):
 
     level.creature_list = arcade.SpriteList()
 
-
     key = arcade.Sprite("images/key-02.png", OBJECT_SPRITE_SCALING)
     key.tag = "key-02"
     randomly_place_sprite(key, level.wall_list)
     print(f"Placed key {key.center_x}, {key.center_y}")
     level.objects_list.append(key)
+
+    for i in range(3):
+        skull = WanderSprite("images/skull.png", CREATURE_SPRITE_SCALING)
+        skull.tag = "skull"
+        skull.dialog_list = ["Woooo!"]
+        skull.physics_engine = arcade.PhysicsEngineSimple(skull, level.all_obstacles)
+        randomly_place_sprite(skull, level.wall_list)
+        level.creature_list.append(skull)
