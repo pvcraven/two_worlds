@@ -71,7 +71,6 @@ def add_level_2_creatures(level):
     key = arcade.Sprite("images/key-02.png", OBJECT_SPRITE_SCALING)
     key.tag = "key-02"
     randomly_place_sprite(key, level.wall_list)
-    print(f"Placed key {key.center_x}, {key.center_y}")
     level.objects_list.append(key)
 
     for i in range(3):

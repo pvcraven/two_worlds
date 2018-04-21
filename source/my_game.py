@@ -1,3 +1,7 @@
+"""
+This holds the main game/window class.
+"""
+
 import arcade
 import random
 import timeit
@@ -47,20 +51,23 @@ class MyGame(arcade.Window):
         texture = arcade.load_texture("images/instructions-01.png")
         self.instructions.append(texture)
 
-        arcade.set_background_color(arcade.color.WHITE)
-
     def setup(self):
         self.player_list = arcade.SpriteList()
         self.player_sprite = PlayerSprite("images/character.png", PLAYER_SPRITE_SCALING)
         self.player_list.append(self.player_sprite)
+        self.view_left = 0
+        self.view_bottom = 0
+        self.current_level_no = 0
+
 
         self.current_state = INSTRUCTIONS_PAGE_0
         self.message_queue = []
 
         self.level_list = create_levels(self.player_sprite)
 
-        # Start on level 1
         self.current_level = self.level_list[self.current_level_no]
+
+        arcade.set_background_color(arcade.color.WHITE)
 
         # Set up the player
 
@@ -75,8 +82,6 @@ class MyGame(arcade.Window):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                          self.current_level.all_obstacles)
-
-        # self.level_list[0].wall_list.append(self.player_sprite)
 
     def draw_instructions_page(self, page_number):
         """
@@ -149,7 +154,7 @@ class MyGame(arcade.Window):
             arcade.draw_rectangle_outline(center_x, center_y,
                                           width, 200, arcade.color.WHITE, 2)
             arcade.draw_text(self.message_queue[0],
-                             center_x, center_y, arcade.color.WHITE, 14, width=width, align="center",
+                             center_x, center_y+10, arcade.color.WHITE, 14, width=width, align="center",
                              anchor_x="center", anchor_y="center")
 
         self.draw_time = timeit.default_timer() - draw_start_time
@@ -159,10 +164,13 @@ class MyGame(arcade.Window):
         center_y = WINDOW_HEIGHT // 2 + self.view_bottom
         width = 400
         arcade.draw_text("Game Over",
-                         center_x+2, center_y-50, arcade.color.BLACK, 50, width=width, align="center",
+                         center_x+2, center_y-35, arcade.color.BLACK, 50, width=width, align="center",
                          anchor_x="center", anchor_y="center")
         arcade.draw_text("Game Over",
-                         center_x, center_y-48, arcade.color.WHITE, 50, width=width, align="center",
+                         center_x, center_y-33, arcade.color.WHITE, 50, width=width, align="center",
+                         anchor_x="center", anchor_y="center")
+        arcade.draw_text("(Press 'R' to restart.)",
+                         center_x, center_y-85, arcade.color.WHITE, 14, width=width, align="center",
                          anchor_x="center", anchor_y="center")
 
     def on_draw(self):
@@ -208,6 +216,11 @@ class MyGame(arcade.Window):
             if key == arcade.key.SPACE:
                 self.current_state = GAME_RUNNING
                 arcade.set_background_color(self.current_level.background_color)
+
+        elif self.current_state == GAME_OVER:
+            if key == arcade.key.R:
+                self.setup()
+                self.current_state = INSTRUCTIONS_PAGE_0
 
         # Game is running
         elif self.current_state == GAME_RUNNING:

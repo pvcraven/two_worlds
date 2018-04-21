@@ -1,4 +1,6 @@
 """
+Level 1
+
 Parts of this code came from:
 http://arcade.academy/examples/procedural_caves_bsp.html
 
@@ -16,10 +18,10 @@ import arcade
 
 from constants import *
 from level import create_grid
-from level import print_grid
 from wander_sprite import LibrarianSprite
 from wander_sprite import CustodianSprite
 from randomly_place_sprite import randomly_place_sprite
+
 
 class Room:
     def __init__(self, r, c, h, w):
@@ -235,6 +237,7 @@ def get_level_1_array():
 
     return grid
 
+
 def add_level_1_creatures(level):
 
     level.creature_list = arcade.SpriteList()
@@ -249,4 +252,3 @@ def add_level_1_creatures(level):
     librarian.physics_engine = arcade.PhysicsEngineSimple(librarian, level.all_obstacles)
     randomly_place_sprite(librarian, level.wall_list)
     level.creature_list.append(librarian)
-

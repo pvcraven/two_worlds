@@ -94,7 +94,6 @@ def add_level_3_creatures(level: Level, player_sprite: arcade.Sprite):
     scepter = arcade.Sprite("images/scepter.png", OBJECT_SPRITE_SCALING)
     scepter.tag = "scepter"
     randomly_place_sprite(scepter, level.wall_list)
-    print(f"Placed scepter {scepter.center_x}, {scepter.center_y}")
     level.objects_list.append(scepter)
 
     dragon = DragonSprite("images/dragon.png", CREATURE_SPRITE_SCALING, player_sprite)

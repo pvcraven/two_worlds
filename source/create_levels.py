@@ -1,7 +1,7 @@
 import arcade
 import random
 
-from constants import  *
+from constants import *
 from level import Level
 from level_1 import get_level_1_array
 from level_1 import add_level_1_creatures
@@ -37,9 +37,6 @@ def create_stairs(level_list):
             stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
             stairs.tag = "Up"
             level_list[1].stair_list.append(stairs)
-
-            print("Placed stairs")
-
 
     # Place the stairs from 1 to 2
     placed = False

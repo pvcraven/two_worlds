@@ -1,3 +1,6 @@
+"""
+Starting point for the game. Get is setup and running.
+"""
 import arcade
 
 from constants import *
