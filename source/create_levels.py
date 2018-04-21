@@ -18,46 +18,48 @@ def create_stairs(level_list):
         level.stair_list = arcade.SpriteList()
 
     # Place the stairs from 0 to 1
-    placed = False
-    while not placed:
-        row = random.randrange(GRID_HEIGHT)
-        column = random.randrange(GRID_WIDTH)
-        value_0 = level_list[0].grid[row][column]
-        value_1 = level_list[1].grid[row][column]
-        if value_0 == 0 and value_1 == 0:
-            placed = True
-            stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
-            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.tag = "Down"
-            level_list[0].stair_list.append(stairs)
+    for i in range(2):
+        placed = False
+        while not placed:
+            row = random.randrange(GRID_HEIGHT)
+            column = random.randrange(GRID_WIDTH)
+            value_0 = level_list[0].grid[row][column]
+            value_1 = level_list[1].grid[row][column]
+            if value_0 == 0 and value_1 == 0:
+                placed = True
+                stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
+                stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.tag = "Down"
+                level_list[0].stair_list.append(stairs)
 
-            stairs = Stairs("images/stairs_up.png", WALL_SPRITE_SCALING)
-            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.tag = "Up"
-            level_list[1].stair_list.append(stairs)
+                stairs = Stairs("images/stairs_up.png", WALL_SPRITE_SCALING)
+                stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.tag = "Up"
+                level_list[1].stair_list.append(stairs)
 
     # Place the stairs from 1 to 2
-    placed = False
-    while not placed:
-        row = random.randrange(GRID_HEIGHT)
-        column = random.randrange(GRID_WIDTH)
-        value_0 = level_list[1].grid[row][column]
-        value_1 = level_list[2].grid[row][column]
-        if value_0 == 0 and value_1 == 0:
-            placed = True
-            stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
-            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.tag = "Down"
-            level_list[1].stair_list.append(stairs)
+    for i in range(2):
+        placed = False
+        while not placed:
+            row = random.randrange(GRID_HEIGHT)
+            column = random.randrange(GRID_WIDTH)
+            value_0 = level_list[1].grid[row][column]
+            value_1 = level_list[2].grid[row][column]
+            if value_0 == 0 and value_1 == 0:
+                placed = True
+                stairs = Stairs("images/stairs_down.png", WALL_SPRITE_SCALING)
+                stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.tag = "Down"
+                level_list[1].stair_list.append(stairs)
 
-            stairs = Stairs("images/stairs_up.png", WALL_SPRITE_SCALING)
-            stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
-            stairs.tag = "Up"
-            level_list[2].stair_list.append(stairs)
+                stairs = Stairs("images/stairs_up.png", WALL_SPRITE_SCALING)
+                stairs.center_x = column * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
+                stairs.tag = "Up"
+                level_list[2].stair_list.append(stairs)
 
 
 def create_walls(level_list):

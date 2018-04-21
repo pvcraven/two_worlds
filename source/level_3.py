@@ -14,7 +14,7 @@ from wander_sprite import DragonSprite
 
 
 # Parameters for cellular automata
-CHANCE_TO_START_ALIVE = 0.4
+CHANCE_TO_START_ALIVE = 0.3
 DEATH_LIMIT = 3
 BIRTH_LIMIT = 4
 NUMBER_OF_STEPS = 4
