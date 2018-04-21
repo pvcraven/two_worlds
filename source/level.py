@@ -21,4 +21,5 @@ class Level:
         self.stair_list = arcade.SpriteList()
         self.creature_list = arcade.SpriteList()
         self.objects_list = arcade.SpriteList()
+        self.missile_list = arcade.SpriteList()
         self.background_color = arcade.color.BLACK

@@ -98,6 +98,7 @@ def add_level_3_creatures(level: Level, player_sprite: arcade.Sprite):
     level.objects_list.append(scepter)
 
     dragon = DragonSprite("images/dragon.png", CREATURE_SPRITE_SCALING, player_sprite)
+    dragon.tag = "dragon"
     dragon.physics_engine = arcade.PhysicsEngineSimple(dragon, level.all_obstacles)
     randomly_place_sprite(dragon, level.wall_list)
     level.creature_list.append(dragon)

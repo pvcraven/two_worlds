@@ -22,6 +22,7 @@ AREA_HEIGHT = int(GRID_HEIGHT * WALL_SPRITE_SIZE)
 
 # How fast the player moves
 MOVEMENT_SPEED = 5
+FIREBALL_SPEED = 7
 
 # How close the player can get to the edge before we scroll.
 VIEWPORT_MARGIN = 300

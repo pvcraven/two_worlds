@@ -2,6 +2,7 @@ import arcade
 import random
 import timeit
 import os
+import math
 
 from constants import *
 from create_levels import create_levels
@@ -101,6 +102,7 @@ class MyGame(arcade.Window):
         self.current_level.stair_list.draw()
         self.current_level.creature_list.draw()
         self.current_level.objects_list.draw()
+        self.current_level.missile_list.draw()
         self.player_list.draw()
 
         # Draw info on the screen
@@ -152,6 +154,17 @@ class MyGame(arcade.Window):
 
         self.draw_time = timeit.default_timer() - draw_start_time
 
+    def draw_game_over(self):
+        center_x = WINDOW_WIDTH // 2 + self.view_left
+        center_y = WINDOW_HEIGHT // 2 + self.view_bottom
+        width = 400
+        arcade.draw_text("Game Over",
+                         center_x+2, center_y-50, arcade.color.BLACK, 50, width=width, align="center",
+                         anchor_x="center", anchor_y="center")
+        arcade.draw_text("Game Over",
+                         center_x, center_y-48, arcade.color.WHITE, 50, width=width, align="center",
+                         anchor_x="center", anchor_y="center")
+
     def on_draw(self):
 
         # This command has to happen before we start drawing
@@ -177,6 +190,11 @@ class MyGame(arcade.Window):
             dialog = nearest_sprite.get_dialog(self.player_sprite)
             if dialog is not None:
                 self.message_queue.append(dialog)
+
+                # Check to see if we won. Terrible way to pass this back, but
+                # whatever.
+                if dialog == "Great job! The castle is saved!":
+                    self.current_state = GAME_OVER
             else:
                 self.message_queue.append("What?")
         else:
@@ -286,7 +304,6 @@ class MyGame(arcade.Window):
                                 self.view_bottom,
                                 WINDOW_HEIGHT + self.view_bottom)
 
-
     def update(self, delta_time):
         """ Movement and game logic """
 
@@ -296,25 +313,64 @@ class MyGame(arcade.Window):
         if len(self.message_queue) > 0:
             return
 
-
         start_time = timeit.default_timer()
 
         # Move player
         self.physics_engine.update()
-        self.player_sprite.center_x = int(self.player_sprite.center_x)
-        self.player_sprite.center_y = int(self.player_sprite.center_y)
 
         # Move creatures
         for creature in self.current_level.creature_list:
             creature.update()
             creature.center_x = int(creature.center_x)
             creature.center_y = int(creature.center_y)
+            if creature.tag == "dragon" and random.randrange(100) == 0:
+                fireball = arcade.Sprite("images/fireball.png", 1)
+                fireball.tag = "fireball"
+
+                # Position the bullet at the player's current location
+                start_x = creature.center_x
+                start_y = creature.center_y
+                fireball.center_x = start_x
+                fireball.center_y = start_y
+
+                # Get from the mouse the destination location for the bullet
+                dest_x = self.player_sprite.center_x
+                dest_y = self.player_sprite.center_y
+
+                # Do math to calculate how to get the bullet to the destination.
+                # Calculation the angle in radians between the start points
+                # and end points. This is the angle the bullet will travel.
+                x_diff = dest_x - start_x
+                y_diff = dest_y - start_y
+                angle = math.atan2(y_diff, x_diff)
+
+                # Angle the bullet sprite so it doesn't look like it is flying
+                # sideways.
+                fireball.angle = math.degrees(angle)
+
+                # Taking into account the angle, calculate our change_x
+                # and change_y. Velocity is how fast the bullet travels.
+                fireball.change_x = math.cos(angle) * FIREBALL_SPEED
+                fireball.change_y = math.sin(angle) * FIREBALL_SPEED
+
+                self.current_level.missile_list.append(fireball)
 
         # Pick up items
         objects_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.objects_list)
         for my_object in objects_hit_list:
             self.current_level.objects_list.remove(my_object)
             self.player_sprite.inventory.append(my_object)
+
+        # Move missiles
+        self.current_level.missile_list.update()
+        for missile in self.current_level.missile_list:
+            sprites_hit = arcade.check_for_collision_with_list(missile, self.current_level.wall_list)
+            if len(sprites_hit) > 0:
+                missile.kill()
+
+        sprites_hit = arcade.check_for_collision_with_list(self.player_sprite, self.current_level.missile_list)
+        if len(sprites_hit) > 0:
+            self.current_state = GAME_OVER
 
         # --- Manage Scrolling ---
         self.scroll()

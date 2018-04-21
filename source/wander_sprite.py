@@ -4,7 +4,6 @@ import math
 
 from constants import *
 from player_sprite import PlayerSprite
-from randomly_place_sprite import randomly_place_sprite
 
 class CreatureSprite(arcade.Sprite):
 
@@ -33,6 +32,7 @@ class WanderSprite(CreatureSprite):
         if random.randrange(60) == 0:
             self.change_x = random.randrange(-2, 3)
             self.change_y = random.randrange(-2, 3)
+
 
 class CustodianSprite(WanderSprite):
 
@@ -70,7 +70,7 @@ class LibrarianSprite(WanderSprite):
         super().__init__(filename, sprite_scaling)
         self.custodian_sprite = custodian_sprite
 
-    def get_dialog(self, player_sprite : PlayerSprite):
+    def get_dialog(self, player_sprite: PlayerSprite):
         self.change_x = 0
         self.change_y = 0
 
@@ -95,6 +95,7 @@ class LibrarianSprite(WanderSprite):
         else:
             return "Please hurry."
 
+
 class DragonSprite(WanderSprite):
 
     def __init__(self, filename, sprite_scaling, player_sprite):
@@ -108,26 +109,4 @@ class DragonSprite(WanderSprite):
     def update(self):
         super().update()
 
-        # First, calculate the angle to the player. We could do this
-        # only when the bullet fires, but in this case we will rotate
-        # the enemy to face the player each frame, so we'll do this
-        # each frame.
-
-        # Position the start at the enemy's current location
-        start_x = self.center_x
-        start_y = self.center_y
-
-        # Get the destination location for the bullet
-        dest_x = self.player_sprite.center_x
-        dest_y = self.player_sprite.center_y
-
-        # Do math to calculate how to get the bullet to the destination.
-        # Calculation the angle in radians between the start points
-        # and end points. This is the angle the bullet will travel.
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
-        # Set the enemy to face the player.
-        # self.angle = math.degrees(angle)-90
 
