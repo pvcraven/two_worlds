@@ -65,7 +65,9 @@ def create_stairs(level_list):
 
 def create_walls(level_list):
 
-    for level in level_list:
+    for index, level in enumerate(level_list):
+        i = index+1
+        wall_filename = f"images/wall-{i:02}.png"
         level.wall_list = arcade.SpriteList()
 
         for row in range(GRID_HEIGHT):
@@ -81,7 +83,7 @@ def create_walls(level_list):
                 column_count = end_column - start_column + 1
                 column_mid = (start_column + end_column) / 2
 
-                wall = arcade.Sprite("images/wall-01.png", WALL_SPRITE_SCALING,
+                wall = arcade.Sprite(wall_filename, WALL_SPRITE_SCALING,
                                      repeat_count_x=column_count)
                 wall.center_x = column_mid * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
                 wall.center_y = row * WALL_SPRITE_SIZE + WALL_SPRITE_SIZE / 2
@@ -96,14 +98,17 @@ def create_levels(player_sprite):
     level = Level()
     level.grid = get_level_1_array()
     level_list.append(level)
+    level.background_color = arcade.color.BISTRE
 
     level = Level()
     level.grid = get_level_2_array()
     level_list.append(level)
+    level.background_color = arcade.color.BLACK_OLIVE
 
     level = Level()
     level.grid = get_level_3_array()
     level_list.append(level)
+    level.background_color = arcade.color.EERIE_BLACK
 
     create_walls(level_list)
 

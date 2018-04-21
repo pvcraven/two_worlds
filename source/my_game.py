@@ -28,7 +28,7 @@ class MyGame(arcade.Window):
         self.grid = None
         self.level_list = None
         self.current_level = None
-        self.current_level_no = 2
+        self.current_level_no = 0
         self.player_list = None
         self.player_sprite = None
         self.view_bottom = 0
@@ -46,7 +46,7 @@ class MyGame(arcade.Window):
         texture = arcade.load_texture("images/instructions-01.png")
         self.instructions.append(texture)
 
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(arcade.color.WHITE)
 
     def setup(self):
         self.player_list = arcade.SpriteList()
@@ -82,7 +82,7 @@ class MyGame(arcade.Window):
         Draw an instruction page. Load the page as an image.
         """
         page_texture = self.instructions[page_number]
-        arcade.draw_texture_rectangle(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2,
+        arcade.draw_texture_rectangle(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 120,
                                       page_texture.width,
                                       page_texture.height, page_texture, 0)
 
@@ -188,6 +188,7 @@ class MyGame(arcade.Window):
         if self.current_state == INSTRUCTIONS_PAGE_0:
             if key == arcade.key.SPACE:
                 self.current_state = GAME_RUNNING
+                arcade.set_background_color(self.current_level.background_color)
 
         elif self.current_state == GAME_RUNNING:
             if key == arcade.key.SPACE and len(self.message_queue) > 0:
@@ -222,6 +223,7 @@ class MyGame(arcade.Window):
                     self.player_sprite.center_x = stair_hit_list[0].center_x
                     self.player_sprite.center_y = stair_hit_list[0].center_y
                     self.current_level_no += 1
+                    arcade.set_background_color(self.current_level.background_color)
                     self.current_level = self.level_list[self.current_level_no]
                     self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                                      self.current_level.wall_list)
@@ -235,6 +237,7 @@ class MyGame(arcade.Window):
                     self.player_sprite.center_x = stair_hit_list[0].center_x
                     self.player_sprite.center_y = stair_hit_list[0].center_y
                     self.current_level_no -= 1
+                    arcade.set_background_color(self.current_level.background_color)
                     self.current_level = self.level_list[self.current_level_no]
                     self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                                      self.current_level.wall_list)
@@ -246,6 +249,43 @@ class MyGame(arcade.Window):
             self.player_sprite.change_y = 0
         elif key == arcade.key.A or key == arcade.key.D:
             self.player_sprite.change_x = 0
+
+    def scroll(self):
+        # Track if we need to change the viewport
+
+        changed = False
+
+        # Scroll left
+        left_bndry = self.view_left + VIEWPORT_MARGIN
+        if self.player_sprite.left < left_bndry:
+            self.view_left -= left_bndry - self.player_sprite.left
+            changed = True
+
+        # Scroll right
+        right_bndry = self.view_left + WINDOW_WIDTH - VIEWPORT_MARGIN
+        if self.player_sprite.right > right_bndry:
+            self.view_left += self.player_sprite.right - right_bndry
+            changed = True
+
+        # Scroll up
+        top_bndry = self.view_bottom + WINDOW_HEIGHT - VIEWPORT_MARGIN
+        if self.player_sprite.top > top_bndry:
+            self.view_bottom += self.player_sprite.top - top_bndry
+            changed = True
+
+        # Scroll down
+        bottom_bndry = self.view_bottom + VIEWPORT_MARGIN
+        if self.player_sprite.bottom < bottom_bndry:
+            self.view_bottom -= bottom_bndry - self.player_sprite.bottom
+            changed = True
+
+        if changed:
+            # print(f"Scroll to {self.view_left}, {self.view_bottom}")
+            arcade.set_viewport(self.view_left,
+                                WINDOW_WIDTH + self.view_left,
+                                self.view_bottom,
+                                WINDOW_HEIGHT + self.view_bottom)
+
 
     def update(self, delta_time):
         """ Movement and game logic """
@@ -277,40 +317,7 @@ class MyGame(arcade.Window):
             self.player_sprite.inventory.append(my_object)
 
         # --- Manage Scrolling ---
-
-        # Track if we need to change the viewport
-
-        changed = False
-
-        # Scroll left
-        left_bndry = self.view_left + VIEWPORT_MARGIN
-        if self.player_sprite.left < left_bndry:
-            self.view_left -= left_bndry - self.player_sprite.left
-            changed = True
-
-        # Scroll right
-        right_bndry = self.view_left + WINDOW_WIDTH - VIEWPORT_MARGIN
-        if self.player_sprite.right > right_bndry:
-            self.view_left += self.player_sprite.right - right_bndry
-            changed = True
-
-        # Scroll up
-        top_bndry = self.view_bottom + WINDOW_HEIGHT - VIEWPORT_MARGIN
-        if self.player_sprite.top > top_bndry:
-            self.view_bottom += self.player_sprite.top - top_bndry
-            changed = True
-
-        # Scroll down
-        bottom_bndry = self.view_bottom + VIEWPORT_MARGIN
-        if self.player_sprite.bottom < bottom_bndry:
-            self.view_bottom -= bottom_bndry - self.player_sprite.bottom
-            changed = True
-
-        if changed:
-            arcade.set_viewport(self.view_left,
-                                WINDOW_WIDTH + self.view_left,
-                                self.view_bottom,
-                                WINDOW_HEIGHT + self.view_bottom)
+        self.scroll()
 
         # Save the time it took to do this.
         self.processing_time = timeit.default_timer() - start_time
