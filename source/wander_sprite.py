@@ -29,7 +29,7 @@ class WanderSprite(CreatureSprite):
     def update(self):
         self.physics_engine.update()
 
-        if random.randrange(60) == 0:
+        if random.randrange(120) == 0:
             self.change_x = random.randrange(-2, 3)
             self.change_y = random.randrange(-2, 3)
 
