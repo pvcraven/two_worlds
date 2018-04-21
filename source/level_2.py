@@ -53,8 +53,8 @@ def get_level_2_array():
 
     count = 0
     while count < 10:
-        x = random.randrange(2, GRID_WIDTH - 2)
-        y = random.randrange(2, GRID_HEIGHT - 2)
+        x = random.randrange(5, GRID_WIDTH - 5)
+        y = random.randrange(5, GRID_HEIGHT - 5)
         if maze[y][x] != 0 and maze[y-1][x] != 0 and maze[y+1][x]:
             maze[y][x] = 0
             count += 1

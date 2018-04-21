@@ -59,6 +59,10 @@ class MyGame(arcade.Window):
         self.view_bottom = 0
         self.current_level_no = 0
 
+        arcade.set_viewport(self.view_left,
+                            WINDOW_WIDTH + self.view_left,
+                            self.view_bottom,
+                            WINDOW_HEIGHT + self.view_bottom)
 
         self.current_state = INSTRUCTIONS_PAGE_0
         self.message_queue = []
