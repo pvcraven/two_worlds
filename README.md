@@ -9,3 +9,6 @@ that's how you get to your Python 3.6+.
 
 For more information on the event, see the [PyWeek](https://pyweek.org/) website.
 
+![Level 1](https://imgur.com/cCrgAqq.png "Level 1")
+![Level 1](https://imgur.com/hvQGUkv.png "Level 2")
+![Level 1](https://imgur.com/sVQnC1T.png "Level 3")
